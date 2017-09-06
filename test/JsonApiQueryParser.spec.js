@@ -21,7 +21,8 @@ describe('JsonApiQueryParser', function () {
         fields: {},
         sort: [],
         page: {},
-        filter: {}
+        search: {},
+        filter: {},
       }
     };
 
@@ -30,7 +31,8 @@ describe('JsonApiQueryParser', function () {
       fields: {},
       sort: [],
       page: {},
-      filter: {}
+      search: {},
+      filter: {},
     };
   });
 
@@ -63,6 +65,7 @@ describe('JsonApiQueryParser', function () {
           page: {
             limit: '20'
           },
+          search: {},
           filter: {
             age: {
               eq: '15',
@@ -99,6 +102,7 @@ describe('JsonApiQueryParser', function () {
           fields: {},
           sort: [],
           page: {},
+          search: {},
           filter: {}
         }
       };
@@ -118,6 +122,7 @@ describe('JsonApiQueryParser', function () {
           fields: {},
           sort: [],
           page: {},
+          search: {},
           filter: {}
         }
       };
@@ -158,6 +163,7 @@ describe('JsonApiQueryParser', function () {
         page: {
           limit: '20'
         },
+        search: {},
         filter: {
           name: { eq: 'test' },
         }
@@ -170,6 +176,7 @@ describe('JsonApiQueryParser', function () {
         fields: {},
         sort: [],
         page: {},
+        search: {},
         filter: {}
       };
 
@@ -188,6 +195,7 @@ describe('JsonApiQueryParser', function () {
           offset: '200',
           limit: '20'
         },
+        search: {},
         filter: {
           name: { eq: 'test' },
           lastname: { eq: 'another' },
@@ -211,6 +219,7 @@ describe('JsonApiQueryParser', function () {
         fields: {},
         sort: [],
         page: {},
+        search: {},
         filter: {}
       };
 
@@ -240,6 +249,7 @@ describe('JsonApiQueryParser', function () {
         },
         sort: [],
         page: {},
+        search: {},
         filter: { }
       };
 
@@ -267,6 +277,7 @@ describe('JsonApiQueryParser', function () {
           limit: '20',
           offset: '180'
         },
+        search: {},
         filter: {}
       };
 
@@ -284,6 +295,7 @@ describe('JsonApiQueryParser', function () {
         fields: {},
         sort: ['-createdon', 'type'],
         page: {},
+        search: {},
         filter: {}
       };
 
@@ -301,6 +313,7 @@ describe('JsonApiQueryParser', function () {
         fields: {},
         sort: [],
         page: {},
+        search: {},
         filter: {
           id: { eq: '5' },
         }
@@ -315,6 +328,7 @@ describe('JsonApiQueryParser', function () {
         fields: {},
         sort: [],
         page: {},
+        search: {},
         filter: {
           id: { eq: '5' },
           name: { eq: 'john doe' },
@@ -334,6 +348,7 @@ describe('JsonApiQueryParser', function () {
         fields: {},
         sort: [],
         page: {},
+        search: {},
         filter: {
           name: {
             not: 'jack'
@@ -350,6 +365,7 @@ describe('JsonApiQueryParser', function () {
         fields: {},
         sort: [],
         page: {},
+        search: {},
         filter: {
           name: {
             not: 'jack'

@@ -10,6 +10,8 @@ let PARSE_PARAM = Object.freeze({
   parseSort: /^sort\=(.*?)/i,
   parseFilterType: /^filter\[(.*?)\]\[(.*?)\]\=(.*?)$/i,
   parseFilter: /^filter\[([^\]]*?)\]\=.*?$/i,
+  parseSearchType: /^search\[(.*?)\]\[(.*?)\]\=(.*?)$/i,
+  parseSearch: /^search\[([^\]]*?)\]\=.*?$/i,
 });
 
 
@@ -33,7 +35,8 @@ class JsonApiQueryParser {
         fields: {},
         sort: [],
         page: {},
-        filter: {}
+        filter: {},
+        search: {}
       }
     };
 
@@ -232,6 +235,34 @@ class JsonApiQueryParser {
    * [Note: The are no proper specifications for this parameter yet.
    * For now the filter is implemented similar to the fields parameter. Values should be url encoded to allow for special characters.]
    *
+   * @param {[string]} filterString [Required sort query string piece. Example: "filter[name]=John%20Doe".]
+   * @param {[object]} requestDataSubset [Required reference to the requestData.queryData object.]
+   * @return {[object]} requestDataSubset [Returning the modified request data.]
+   *
+   **/
+  static parseSearch (filterString, requestDataSubset) {
+    let targetColumn;
+    let targetFilterString;
+    let searchNameRegex = /^search.*?\=(.*?)$/i;
+
+    targetColumn = filterString.replace(PARSE_PARAM.parseSearch, function(match, $1, $2, $3) {
+      return $1;
+    });
+
+    targetFilterString = filterString.replace(searchNameRegex, function(match, $1, $2, $3) {
+      return $1;
+    });
+
+    requestDataSubset.search[targetColumn] = { eq: targetFilterString };
+
+    return requestDataSubset;
+  }
+
+
+  /**
+   * [Note: The are no proper specifications for this parameter yet.
+   * For now the filter is implemented similar to the fields parameter. Values should be url encoded to allow for special characters.]
+   *
    * @param {[string]} filterString [Required sort query string piece. Example: "filter[name][like]=John%20Doe".]
    * @param {[object]} requestDataSubset [Required reference to the requestData.queryData object.]
    * @return {[object]} requestDataSubset [Returning the modified request data.]
@@ -263,6 +294,43 @@ class JsonApiQueryParser {
     }
     return requestDataSubset;
   }
+
+  /**
+   * [Note: The are no proper specifications for this parameter yet.
+   * For now the filter is implemented similar to the fields parameter. Values should be url encoded to allow for special characters.]
+   *
+   * @param {[string]} filterString [Required sort query string piece. Example: "filter[name][like]=John%20Doe".]
+   * @param {[object]} requestDataSubset [Required reference to the requestData.queryData object.]
+   * @return {[object]} requestDataSubset [Returning the modified request data.]
+   *
+   **/
+  static parseSearchType (filterString, requestDataSubset) {
+    let targetType;
+    let targetColumn;
+    let targetFilterString;
+
+    targetColumn = filterString.replace(PARSE_PARAM.parseSearchType, function(match, $1) {
+      return $1;
+    });
+
+    targetType = filterString.replace(PARSE_PARAM.parseSearchType, function(match, $1, $2) {
+      return $2;
+    });
+
+    targetFilterString = filterString.replace(PARSE_PARAM.parseSearchType, function(match, $1, $2, $3) {
+      return $3;
+    });
+
+    if (requestDataSubset.search[targetColumn]) {
+      requestDataSubset.search[targetColumn][targetType] = targetFilterString;
+    } else {
+      requestDataSubset.search[targetColumn] = {
+        [targetType]: targetFilterString
+      }
+    }
+    return requestDataSubset;
+  }
+
 
   /**
    * [Slash trim to avoid faulty endpoint mapping. Runs recursively to remove any double slash errors]
