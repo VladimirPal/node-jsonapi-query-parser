@@ -8,8 +8,8 @@ let PARSE_PARAM = Object.freeze({
   parseFields: /^fields\[(.*?)\]\=.*?$/i,
   parsePage: /^page\[(.*?)\]\=.*?$/i,
   parseSort: /^sort\=(.*?)/i,
+  parseFilterType: /^filter\[(.*?)\]\[(.*?)\]\=(.*?)$/i,
   parseFilter: /^filter\[([^\]]*?)\]\=.*?$/i,
-  parseFilterType: /^filter\[(.*?)\]\[(.*?)\]\=(.*?)$/i
 });
 
 
@@ -33,14 +33,7 @@ class JsonApiQueryParser {
         fields: {},
         sort: [],
         page: {},
-        filter: {
-          like: {},
-          not: {},
-          lt: {},
-          lte: {},
-          gt: {},
-          gte: {}
-        }
+        filter: {}
       }
     };
 
@@ -230,7 +223,7 @@ class JsonApiQueryParser {
       return $1;
     });
 
-    requestDataSubset.filter[targetColumn] = targetFilterString;
+    requestDataSubset.filter[targetColumn] = { eq: targetFilterString };
 
     return requestDataSubset;
   }
@@ -248,12 +241,12 @@ class JsonApiQueryParser {
     let targetType;
     let targetColumn;
     let targetFilterString;
-    
-    targetType = filterString.replace(PARSE_PARAM.parseFilterType, function(match, $1) {
+
+    targetColumn = filterString.replace(PARSE_PARAM.parseFilterType, function(match, $1) {
       return $1;
     });
-    
-    targetColumn = filterString.replace(PARSE_PARAM.parseFilterType, function(match, $1, $2) {
+
+    targetType = filterString.replace(PARSE_PARAM.parseFilterType, function(match, $1, $2) {
       return $2;
     });
 
@@ -261,10 +254,13 @@ class JsonApiQueryParser {
       return $3;
     });
 
-    if(requestDataSubset.filter[targetType]){
-      requestDataSubset.filter[targetType][targetColumn] = targetFilterString;
+    if (requestDataSubset.filter[targetColumn]) {
+      requestDataSubset.filter[targetColumn][targetType] = targetFilterString;
+    } else {
+      requestDataSubset.filter[targetColumn] = {
+        [targetType]: targetFilterString
+      }
     }
-
     return requestDataSubset;
   }
 
